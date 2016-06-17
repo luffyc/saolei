@@ -1,0 +1,248 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>saolei</title>
+</head>
+<style>
+	body,ul,li{
+        padding:0;
+        margin:0;
+        list-style: none;
+        font-family: "微软雅黑";
+    }
+    #box{
+        width:100%;
+        height:100%;
+        position: absolute;
+        left:0;
+        right:0;
+        top:0;
+        bottom:0;
+        margin:auto;
+        background:#E3C9A4;
+        box-shadow: inset 0 0 12px #DAB784;
+    }
+    .left{
+        position: absolute;
+        margin:25px auto;
+        top:0;
+        bottom:0;
+        left:50%;
+        margin-left: -600px;
+    }
+    .choose{
+        width:200px;
+        height:200px;
+        margin-top: 30px;
+    }
+    .choose .type{
+        width:120px;
+        height:40px;
+        border:1px solid #9F7535;
+        background:#E3C9A4;
+        margin:0 20px 20px 40px;
+        text-align: center;
+        line-height: 40px;
+        color:#333;
+        cursor: pointer;
+    }
+    .choose .selected{
+        box-shadow: inset 0 0 12px #DAB784;
+        color:#fff;
+        border:1px solid #C49D63;
+    }
+    .sence{
+		width:600px;
+		height:600px;
+        position: absolute;
+        margin:25px auto;
+        top:0;
+        bottom:0;
+        left:0;
+        right:0;
+        background: #DEBF94;
+	}
+	.block{
+        border:2px solid #9F7535;
+		line-height: 28px;
+		text-align: center;
+        margin:1px 2px 1px 2px;
+		float:left;
+		background: #C69142;
+		cursor: pointer;
+        box-shadow: inset 0 0 5px #C48B3B;
+	}
+	.biaoji::after{
+		content:'⚐';
+        font-size: 20px;
+        color:#fff;
+	}
+	.tip{
+		background: #E3C9A4;
+        border:2px solid #C49D63;
+        box-shadow: inset 0 0 10px #9F7535;
+        font-family: '汉仪娃娃篆简';
+        font-size: 24px;
+        font-weight: 300px;
+	}
+	input{
+        border:none;
+        outline: none;
+        width:140px;
+        margin:20px;
+        margin-left: 30px;
+        border-bottom:1px solid #333;
+        background:#E3C9A4;
+    }
+    .lei{
+        font-size: 20px;
+    }
+</style>
+<body>
+    <div id="box">
+        <div class="left">
+            <div class="choose">
+                <div class="type sample selected">sample</div>
+                <div class="type medium">medium</div>
+                <div class="type difficulty">difficulty</div>
+            </div>
+            <input type="text" id="type" placeholder="请输入10-20间的数字">
+        </div>
+    	<div class="sence"></div>
+    </div>
+	<script src="./jquery-1.12.0.js"></script>
+	<script>
+	$(function(){
+
+        var hang;
+        
+        $(document).on('contextmenu',false);
+        var zb = function(x,y){
+            return x + '-' + y;
+        }
+
+        var jisuan = function(x,y){
+        	var num = 0;
+        	if( $('#' + zb(x-1,y-1) ).is('.lei') ){ num++ };
+        	if( $('#' + zb(x-1,y) ).is('.lei') ){ num++ };
+        	if( $('#' + zb(x-1,y+1) ).is('.lei') ){ num++ };
+        	if( $('#' + zb(x,y-1) ).is('.lei') ){ num++ };
+        	if( $('#' + zb(x,y+1) ).is('.lei') ){ num++ };
+        	if( $('#' + zb(x+1,y-1) ).is('.lei') ){ num++ };
+        	if( $('#' + zb(x+1,y) ).is('.lei') ){ num++ };
+        	if( $('#' + zb(x+1,y+1) ).is('.lei') ){ num++ };
+        	return num;
+        }
+
+        var left = function(e){
+        	if( $(this).is('.biaoji')){
+        		return;
+        	}
+        	if( e.data.lei ){
+        		alert('die')
+        		$('.lei').css('backgroundColor','#fff');
+                $('.lei').text('⚉');
+        	}else{
+                var tip = jisuan(e.data.x,e.data.y);
+                if( tip === 0){
+                    $(this).css({color:'#39ABB8'});
+                }
+                if( tip === 1){
+                    $(this).css({color:'#AD5EC3'});
+                }
+                if( tip === 2){
+                    $(this).css({color:'#61C44B'});
+                }
+                if( tip === 3){
+                    $(this).css({color:'#A0BE18'});
+                }
+                if( tip === 4){
+                    $(this).css({color:'#FEA132'});
+                }
+                if( tip === 5){
+                    $(this).css({color:'#289FBA'});
+                }
+                $(this).text(tip).addClass('tip');
+        	}
+        }
+
+        var right = function(e){
+        	if( $(this).is('.tip')){
+        		return;
+        	}
+        	$(this).toggleClass('biaoji');
+            if( $('.lei').length === $('.biaoji').length ){
+            	if( $('.lei.biaoji').length === $('.lei').length ){
+            		alert('win 恭喜你 你赢了');
+            		return;
+            	}
+            	alert('离赢还差一步');
+            }
+        }
+        
+        var clickHandler = function(e){
+            if( e.which === 1 ){
+            	left.call(this,e)
+            }else if( e.which === 3 ){
+            	right.call(this,e)
+            }
+        }
+        
+        var num = 0.9;
+        $('.type').on('click',function(){
+            if( this.classList.contains('simple') ){
+                num = 0.9;
+            }else if( this.classList.contains('medium') ){
+                num = 0.7;
+            }else if( this.classList.contains('difficulty') ){
+                num = 0.5;
+            }
+            $('.selected').removeClass('selected');
+            $(this).addClass('selected');
+        })
+
+
+        var render = function(){
+	       	hang = hang || 10;
+	       	var i = 0, j = 0,sence = $('.sence'),
+	        wh = Math.floor(600/hang);
+	        sence.empty();
+	        for( ;i<hang;i++){
+	            for( j=0;j<hang;j++){
+	            	var islei = Math.random() > num;
+	                $('<div>')
+	                .addClass(function(){
+	                	return 'block ' + ( islei ? 'lei':'' );
+	                })
+	                .attr('id',zb(i,j))
+	                .width(wh-8)
+	                .height(wh-4)
+	                .css('line-height',wh+'px')
+	                .on('mousedown',{x:i,y:j,lei:islei},clickHandler)
+	                .appendTo( sence );
+	            }
+	        }
+	        sence.width(wh*hang).height(wh*hang);
+        }
+        
+        render();
+        
+        //自定义行列
+        $('#type').on('keydown',function(e){
+            if( e.keyCode === 13){
+                hang = $(this).val()
+                if( isNaN( Number( hang ) )){
+                    alert('不是一个数字')
+                }else if( hang < 10 || hang > 20 ){
+                    alert('正常点')
+                }else{
+                	render();
+                }
+            }
+        })
+
+	})
+	</script>
+</body>
+</html>
